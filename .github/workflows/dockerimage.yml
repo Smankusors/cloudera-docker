@@ -5,12 +5,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
+    - name: Login to GPR
+      run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} docker.pkg.github.com
+    - name: Build the Docker image
+      run: docker build -t docker.pkg.github.com/smankusors/cloudera-docker/cloudera6.3:${GITHUB_SHA} .
     - name: Publish the Docker image to GPR
-      uses: machine-learning-apps/gpr-docker-publish@master
-      id: docker
-      with:
-        USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        IMAGE_NAME: 'cloudera6.3'
-        DOCKERFILE_PATH: 'Dockerfile'
-        BUILD_CONTEXT: '.'
+      run: docker push docker.pkg.github.com/smankusors/cloudera-docker/cloudera6.3:${GITHUB_SHA}
