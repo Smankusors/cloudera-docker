@@ -1,4 +1,7 @@
 #!/bin/sh
 /init.sh
-runuser -u cloudera-scm -g cloudera-scm /opt/cloudera/cm/bin/cm-server-pre
-runuser -u cloudera-scm -g cloudera-scm /opt/cloudera/cm/bin/cm-server | grep -v "useSSL=false"
+touch /var/log/cloudera-scm-server/cloudera-scm-server.log
+chmod 777 /var/log/cloudera-scm-server/cloudera-scm-server.log
+systemctl start cloudera-scm-server
+sleep 10
+tail -f /var/log/cloudera-scm-server/cloudera-scm-server.log | grep -v "Establishing SSL"

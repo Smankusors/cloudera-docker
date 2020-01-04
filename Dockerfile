@@ -6,24 +6,25 @@ ENV DEBIAN_FRONTEND=noninteractive \
 
 # base image layer
 RUN apt update \
-	&& apt install -y wget curl build-essential software-properties-common openjdk-11-jdk mysql-server libmysql-java openssh-server dnsutils tzdata \
-	&& ln -s /usr/lib/jvm/java-11-openjdk-amd64 /usr/lib/jvm/jdk-11 \
+	&& apt install -y wget curl build-essential software-properties-common mysql-server libmysql-java openssh-server dnsutils tzdata nano vim nfs-common \
 	&& ssh-keygen -b 2048 -t rsa -f /root/.ssh/id_rsa -N "" \
 	&& cp /root/.ssh/id_rsa.pub /root/.ssh/authorized_keys \
 	&& (echo "PermitRootLogin prohibit-password" >> /etc/ssh/sshd_config) \
+	&& (echo "Port 2222 " >> /etc/ssh/sshd_config) \
 	&& apt autoclean \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
 	&& echo $TZ > /etc/timezone
 
-# cloudera manager layer
+# cloudera manager + java layer
 RUN wget https://archive.cloudera.com/cm6/6.3.0/ubuntu1604/apt/archive.key \
 	&& apt-key add archive.key \
 	&& rm archive.key \
 	&& apt-add-repository 'deb https://archive.cloudera.com/cm6/6.3.1/ubuntu1804/apt/ bionic-cm6.3.1 contrib' \
+	&& apt install -y oracle-j2sdk1.8 \
 	&& apt install -y cloudera-manager-daemons cloudera-manager-agent cloudera-manager-server \
 	&& apt autoclean \
-        && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /var/lib/apt/lists/* \
 	&& service mysql stop
 
 COPY mysqld_cloudera.cnf /etc/mysql/mysql.conf.d/mysqld_cloudera.cnf
@@ -44,7 +45,7 @@ RUN chmod 644 /etc/mysql/mysql.conf.d/mysqld_cloudera.cnf \
 	&& apt install -y zookeeper=3.4.5+cdh6.3.2-1605554 \
 	&& apt install -y bigtop-utils bigtop-jsvc hadoop-kms hadoop-httpfs hadoop-hdfs-nfs3 hadoop-hdfs-fuse hbase hive hive-hbase oozie-client oozie hue impala impala-shell solr-doc search sentry-hdfs-plugin solr-mapreduce hbase-solr hbase-solr-doc solr-crunch spark-python avro-doc avro-tools kafka \
 	&& apt autoclean \
-        && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
 
 COPY bin/ /
 CMD ["bash"]

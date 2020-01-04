@@ -1,5 +1,4 @@
 #!/bin/sh
-/init-ip.sh
 service mysql start
 service ssh start
 service ntp start
