@@ -1,5 +1,4 @@
 #!/bin/sh
-service mysql start
 service ssh start
 service ntp start
 systemctl start supervisord

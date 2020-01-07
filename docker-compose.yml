@@ -1,0 +1,19 @@
+version: "3"
+services:
+  cloudera:
+    container_name: cloudera
+    build: .
+    image: cdh6.3_nonparcel:0.9
+    network_mode: "host"
+
+    #tambahkan semua komputer yangg dipakai disini
+    extra_hosts:
+    - "SMANKUSORS-ASUS:192.168.1.2"
+    #- "wawa:192.168.1.3"
+
+    #entrypoint, pilih salah satu, atau
+    entrypoint: /start-scm-agent.sh  #untuk client
+    #entrypoint: /start-scm-server.sh #untuk server
+    #uncomment dua baris dibawah ini untuk manual start
+    #stdin_open: true
+    #tty: true
